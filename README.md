@@ -52,13 +52,11 @@ The most straightforward approach is to use the `jupyter kernelspec install` com
 ```bash
 jupyter kernelspec install ./haskell --user
 ```
-Verify the kernel installation by listing available kernels with `jupyter kernelspec list`. Your Haskell kernel should appear in the output, indicating that Jupyter has successfully discovered and registered the kernel specification. If everything is correct you should see haskell
+Verify the kernel installation by listing available kernels with `jupyter kernelspec list`. Your Haskell kernel should appear in the output, indicating that Jupyter has successfully discovered and registered the kernel specification. If everything is correct you should see a new notebook type in Launcher > Notebook.
 
 Alternativly you can "install" manualy. Jupyter kernels are defined by a `kernel.json` file that specifies how to launch the kernel and provides metadata about its capabilities.  Create a directory for your kernel specification, typically named `haskell` or `hjnkernel`, but location for that may vary.
 
-The `argv` field specifies the command line used to launch the kernel, including the path to your compiled HJNKernel.exe and the connection file placeholder that Jupyter will replace with the actual connection file path. 
-
-Verify the kernel installation by listing available kernels with `jupyter kernelspec list`. Your Haskell kernel should appear in the output, indicating that Jupyter has successfully discovered and registered the kernel specification.
+The `argv` field specifies the command line used to launch the kernel, including the path to your compiled HJNKernel.exe and the connection file placeholder that Jupyter will replace with the actual connection file path.
 
 ## Testing Framework
 
