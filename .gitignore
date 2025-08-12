@@ -1,0 +1,10 @@
+# vs trash
+.vs/
+*.filters
+*.user
+# build artifacts
+x64/
+# jupyter trash
+/examples/.ipynb_checkpoints/
+# python trash
+tests/__pycache__/*
