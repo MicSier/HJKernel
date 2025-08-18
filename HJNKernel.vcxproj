@@ -170,9 +170,13 @@
     <ClCompile Include="HJNKernel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jp_comm.hpp" />
     <ClInclude Include="ghci_bridge.hpp" />
+    <ClInclude Include="jp_history.hpp" />
+    <ClInclude Include="jp_exec.hpp" />
     <ClInclude Include="json_parser.hpp" />
     <ClInclude Include="sha256.hpp" />
+    <ClInclude Include="jupyter_protocol.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

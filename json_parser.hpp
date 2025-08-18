@@ -1,8 +1,12 @@
+#ifndef JSON_HPP
+#define JSON_HPP
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <cctype>
+#include <sstream>
 
 struct JsonValue;
 
@@ -223,3 +227,5 @@ std::string JsonValue::to_string() const {
 
     return os.str();
 }
+
+#endif // JSON_HPP
