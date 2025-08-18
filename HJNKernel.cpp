@@ -162,6 +162,9 @@ int main(int argc, char* argv[]) {
 
             std::string code = content.o["code"].s;
             send_execute_input(code, exec_counter, header, identities, key, iopub);
+            std::string ghci_result;
+            ghci_result = ghci.send(code);
+            /*
             size_t n_new_lines = 0;
             for (size_t i = 0; i < code.size(); i++)
                 if (code[i] == '\n') n_new_lines++;
@@ -170,7 +173,7 @@ int main(int argc, char* argv[]) {
             if (n_new_lines == 0)
                 ghci_result = ghci.send(code);
             else
-                ghci_result = ghci.send_file_load(code);
+                ghci_result = ghci.send_file_load(code);*/
 
             send_execute_result(iopub, identities, header, ghci_result, exec_counter, key);
             send_execute_reply(exec_counter, header, identities, key, shell);
@@ -182,8 +185,8 @@ int main(int argc, char* argv[]) {
             exit(1);
         }
 
-            send_status(iopub, "idle", session, key);
-        }
+        send_status(iopub, "idle", session, key);
+    }
 
     ghci.stop();
     return 0;

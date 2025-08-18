@@ -12,9 +12,9 @@ A custom JSON parser handles message serialization and deserialization, while cu
 
 ## Usage
 
-A look into examples: (examples/Fourier.ipynb, examples/Mandelbrot.ipynb, examples/Newton.ipynb) should give the right idea about how the project is ment to be used.
+A look into examples: (examples/Fourier.ipynb, examples/Mandelbrot.ipynb, examples/Newton.ipynb) should give the right idea about how the project is meant to be used.
 
-In general single line code cells are send directly to ghci and multi-line are reloaded into main module if sucessfully compiled and ignored otherwise. Multi-line code cells are expected to house only top level definitions and one line cells expressions based on the definitions from multi-line cells. This is a major limitation that was taken on for the sake of simplicity of the kernel implementation.
+In general both single and multi-line code cells are send to ghci using paste mode (:{ \code here\ :}). Multi-line code cells are expected to house top level definitions and one line cells expressions based on the definitions from multi-line cells. This is a major limitation that was taken on for the sake of simplicity of the kernel implementation.
 
 ## Dependencies
 

@@ -27,7 +27,7 @@ void send_execute_result(zmq::socket_t& sock,
     content.o["data"] = data;
     content.o["metadata"] = JsonValue(JsonValue::Object);
 
-    send_message("execute_input", content, parent_header, identities, key, sock);
+    send_message("execute_result", content, parent_header, identities, key, sock);
 }
 
 void send_execute_input(const std::string& code,

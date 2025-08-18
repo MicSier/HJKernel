@@ -1,7 +1,7 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-//#include <windows.h>
+#include <windows.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -34,7 +34,7 @@ std::string make_uuid() {
     return ss.str();
 }
 
-/* not cross-platform and not needed now
+ //not cross-platform and not needed now
 std::string make_jupyter_style_id() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -55,7 +55,7 @@ std::string make_jupyter_style_id() {
     ss << "_" << GetCurrentProcessId() << "_" << ++counter;
     return ss.str();
 }
-*/
+
 
 std::string iso8601_now() {
     auto now = std::chrono::system_clock::now();
@@ -85,7 +85,7 @@ void send_message(const std::string& msg_type,
 {
     JsonValue header;
     header.type = JsonValue::Object;
-    header.o["msg_id"] = JsonValue{ JsonValue::String, false, 0.0, make_uuid() };
+    header.o["msg_id"] = JsonValue{ JsonValue::String, false, 0.0, make_jupyter_style_id() };
     header.o["username"] = JsonValue{ JsonValue::String, false, 0.0, "user" };
     header.o["session"] = parent_header.o.at("session");
     header.o["date"] = JsonValue{ JsonValue::String, false, 0.0, iso8601_now() };
@@ -94,6 +94,55 @@ void send_message(const std::string& msg_type,
 
     JsonValue metadata;
     metadata.type = JsonValue::Object;
+
+    std::string header_json = header.to_string();
+    std::string parent_json = parent_header.to_string();
+    std::string meta_json = metadata.to_string();
+    std::string content_json = content.to_string();
+
+    std::string sig = hmac_sha256(key,
+        header_json + parent_json + meta_json + content_json);
+
+    // Send frames: [identities, "<IDS|MSG>", sig, header, parent, metadata, content]
+
+    // Send identities
+    for (const auto& id : identities) {
+        zmq::message_t msg(id.size());
+        memcpy(msg.data(), id.data(), id.size());
+        socket.send(std::move(msg), zmq::send_flags::sndmore);
+    }
+
+    const std::string delimiter = "<IDS|MSG>";
+    socket.send(zmq::message_t(delimiter.data(), delimiter.size()), zmq::send_flags::sndmore);
+    socket.send(zmq::buffer(sig), zmq::send_flags::sndmore);
+    socket.send(zmq::buffer(header_json), zmq::send_flags::sndmore);
+    socket.send(zmq::buffer(parent_json), zmq::send_flags::sndmore);
+    socket.send(zmq::buffer(meta_json), zmq::send_flags::sndmore);
+    socket.send(zmq::buffer(content_json), zmq::send_flags::none);
+}
+
+void send_message(const std::string& msg_type,
+    const JsonValue& content,
+    const std::vector<zmq::message_t>& identities,
+    const std::string& key,
+    zmq::socket_t& socket,
+    const std::string session
+)
+{
+    JsonValue header;
+    header.type = JsonValue::Object;
+    header.o["msg_id"] = JsonValue{ JsonValue::String, false, 0.0, make_jupyter_style_id() };
+    header.o["username"] = JsonValue{ JsonValue::String, false, 0.0, "user" };
+    header.o["session"] = JsonValue{ JsonValue::String, false, 0.0, session };
+    header.o["date"] = JsonValue{ JsonValue::String, false, 0.0, iso8601_now() };
+    header.o["msg_type"] = JsonValue{ JsonValue::String, false, 0.0, msg_type };
+    header.o["version"] = JsonValue{ JsonValue::String, false, 0.0, "5.3" };
+
+    JsonValue metadata;
+    metadata.type = JsonValue::Object;
+
+    JsonValue parent_header;
+    parent_header.type = JsonValue::Object;
 
     std::string header_json = header.to_string();
     std::string parent_json = parent_header.to_string();
@@ -136,7 +185,7 @@ void send_status(zmq::socket_t& iopub_sock, const std::string& execution_state, 
     zmq::message_t topic_message(topic.begin(),topic.end());
     identities.push_back(std::move(topic_message));
 
-    send_message("status", content, parent_header, identities, key, iopub_sock);
+    send_message("status", content, identities, key, iopub_sock, session);
 }
 
 void send_kernel_info_reply(zmq::socket_t& sock,
